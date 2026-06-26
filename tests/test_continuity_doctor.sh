@@ -6,7 +6,7 @@ SCRIPT="$ROOT/continuity-doctor.zsh"
 
 zsh -n "$SCRIPT"
 
-zsh "$SCRIPT" version | grep -q "continuity-doctor 0.1.0"
+zsh "$SCRIPT" version | grep -q "continuity-doctor 0.1.1"
 zsh "$SCRIPT" help | grep -q "read-only"
 zsh "$SCRIPT" explain | grep -q "Safest manual order"
 zsh "$SCRIPT" check >/tmp/continuity_doctor_check.txt

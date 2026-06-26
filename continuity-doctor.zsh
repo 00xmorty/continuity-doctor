@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 # continuity-doctor — read-only macOS Continuity / Universal Control diagnostics
-# v0.1.0
+# v0.1.1
 set -u
 
 SCRIPT_NAME="continuity-doctor"
-VERSION="0.1.0"
+VERSION="0.1.1"
 LOG_MINUTES=10
 
 usage() {
@@ -73,11 +73,16 @@ wifi_info() {
 
 bluetooth_info() {
   local bt
-  bt=$(system_profiler SPBluetoothDataType 2>/dev/null | awk -F': ' '/Bluetooth Power/ {print $2; exit}')
+  # macOS reports this as `Bluetooth Power: On` on some versions and
+  # `State: On` under `Bluetooth Controller` on newer/other builds.
+  bt=$(system_profiler SPBluetoothDataType 2>/dev/null | awk -F': ' '
+    /Bluetooth Power/ {print $2; exit}
+    /^[[:space:]]*State:/ {print $2; exit}
+  ')
   case "$bt" in
     On) status_line GREEN "Bluetooth" "on" ;;
     Off) status_line RED "Bluetooth" "off; Universal Control needs Bluetooth" ;;
-    *) status_line YELLOW "Bluetooth" "state unknown" ;;
+    *) status_line YELLOW "Bluetooth" "state unknown; verify manually in System Settings" ;;
   esac
 }
 
